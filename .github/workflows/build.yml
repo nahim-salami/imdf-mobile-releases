@@ -78,6 +78,15 @@ jobs:
       - name: Nom de l'app (label Android)
         run: sed -i 's/android:label="[^"]*"/android:label="IMDF"/' android/app/src/main/AndroidManifest.xml
 
+      # flutter create n'ajoute INTERNET qu'aux manifests debug/profile :
+      # sans ça, l'APK release n'a aucun accès réseau (API, images, vidéos).
+      - name: Permission INTERNET (manifest release)
+        run: |
+          MANIFEST=android/app/src/main/AndroidManifest.xml
+          grep -q 'android.permission.INTERNET' "$MANIFEST" || \
+            sed -i 's#<application#<uses-permission android:name="android.permission.INTERNET"/>\n    <application#' "$MANIFEST"
+          grep -n 'INTERNET' "$MANIFEST" || (echo "INTERNET manquant" && exit 1)
+
       - name: Dépendances
         run: flutter pub get
 
