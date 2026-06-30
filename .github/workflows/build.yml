@@ -75,6 +75,9 @@ jobs:
       - name: Générer les plateformes natives
         run: flutter create --org "$ORG" --project-name "$PROJECT_NAME" --platforms android .
 
+      - name: Nom de l'app (label Android)
+        run: sed -i 's/android:label="[^"]*"/android:label="IMDF"/' android/app/src/main/AndroidManifest.xml
+
       - name: Dépendances
         run: flutter pub get
 
@@ -122,6 +125,11 @@ jobs:
 
       - name: Générer les plateformes natives
         run: flutter create --org "$ORG" --project-name "$PROJECT_NAME" --platforms ios .
+
+      - name: Nom de l'app (iOS)
+        run: |
+          /usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName IMDF" ios/Runner/Info.plist || /usr/libexec/PlistBuddy -c "Add :CFBundleDisplayName string IMDF" ios/Runner/Info.plist
+          /usr/libexec/PlistBuddy -c "Set :CFBundleName IMDF" ios/Runner/Info.plist || true
 
       - name: Dépendances
         run: flutter pub get
